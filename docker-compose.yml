@@ -1,0 +1,64 @@
+version: "3.8"
+services:
+  frontend:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT_EXPOSE}:80"
+    volumes:
+#     - ./nginx/index.html:/usr/share/nginx/html/index.html
+#      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /usr/share/nginx/html
+      - /etc/nginx/conf.d/      
+
+  monitoring:
+    build: ./prometheus
+    restart: unless-stopped
+    ports:
+      - "${MONITORING_PORT_EXPOSE}:9090"
+    volumes:
+#      - ./prometheus/:/etc/prometheus/
+      - /etc/prometheus
+    command: 
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --log.level=debug
+
+  exporter:
+    image: nginx/nginx-prometheus-exporter
+    restart: unless-stopped
+    ports:
+      - "9113:9113"
+    command:
+      - -nginx.scrape-uri
+      - http://frontend:80/metrics
+    depends_on:
+      - frontend
+
+  bbox:
+    build: ./bbox
+    ports:
+      - "${BBOX_PORT_EXPOSE}:9115"
+    volumes:
+#      - ./bbox:/etc/blackbox/config
+      - /etc/blackbox/config
+    depends_on:
+      - monitoring
+    command:
+    - --config.file=/etc/blackbox/config/blackbox.yml
+
+  alertmanager:
+    build: ./alertmanager
+    restart: unless-stopped
+    ports:
+      - "${ALERTMAN_PORT_EXPOSE}:9093"
+    volumes:
+      - alertmanager-data:/data
+      - /etc/alertmanager
+    depends_on:
+      - monitoring
+    command: 
+    - --config.file=/etc/alertmanager/alertmanager.yml 
+
+
+volumes:
+  alertmanager-data:

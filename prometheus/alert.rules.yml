@@ -1,0 +1,20 @@
+groups:
+  - name: alert.rules
+    rules:
+    - alert: InstanceDown
+      expr: up == 0
+      for: 1m
+      labels:
+        severity: "critical"
+      annotations:
+        title: "The instance {{ $labels.instance }} is down"
+        description: "{{ $labels.instance }} has been down for more than 1 minute."
+
+    - alert: EndpointDown
+      expr: probe_success == 0
+      for: 10s
+      labels:
+        severity: "critical"
+      annotations:
+        summary: "Endpoint {{ $labels.instance }} down"
+    

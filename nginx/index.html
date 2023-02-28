@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title> My Technical Task </title>
+</head>
+<body>
+        <body style=text-align:center;background-color:white;font-weight:900;font-size:20px;font-family:Helvetica,Arial,sans-serif>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Logo_Pilz_GmbH_%26_Co_.KG.jpg/1599px-Logo_Pilz_GmbH_%26_Co_.KG.jpg?20180125075119">
+        <h1> This is a custom nginx webpage hosted in a Docker container </h1>
+        <p> Site used for testing purposes only</p>
+        <p>Not officially affiliated with Pilz</p>
+        <p> This container was deployed: <div id="date"></div></p>
+<script>
+        var date = new Date();
+        document.getElementById("date").innerHTML=date.toLocaleString();
+</script>
+</body>
+</html>
